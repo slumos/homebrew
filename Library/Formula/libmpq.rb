@@ -1,9 +1,9 @@
 require 'formula'
 
-class Rats < Formula
-  url 'https://www.fortify.com/downloads2/public/rats-2.3.tar.gz'
-  homepage 'http://www.fortify.com/security-resources/rats.jsp'
-  md5 '339ebe60fc61789808a457f6f967d226'
+class Libmpq <Formula
+  url 'https://libmpq.org/download/libmpq-0.4.2.tar.bz2'
+  homepage 'https://libmpq.org'
+  md5 '54ec039b9654ba1662485e1bc9682850'
 
   def install
     system "./configure", "--disable-debug", "--disable-dependency-tracking",
