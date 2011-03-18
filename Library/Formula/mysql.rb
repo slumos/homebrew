@@ -1,9 +1,9 @@
 require 'formula'
 
-class Mysql <Formula
+class Mysql < Formula
   homepage 'http://dev.mysql.com/doc/refman/5.1/en/'
-  url 'http://mysql.mirrors.pair.com/Downloads/MySQL-5.1/mysql-5.1.54.tar.gz'
-  md5 '2a0f45a2f8b5a043b95ce7575796a30b'
+  url 'http://mysql.mirrors.pair.com/Downloads/MySQL-5.1/mysql-5.1.56.tar.gz'
+  md5 '15161d67f4830aad3a8a89e083749d49'
 
   depends_on 'readline'
 
@@ -13,7 +13,8 @@ class Mysql <Formula
       ['--with-bench', "Keep benchmark app when installing."],
       ['--with-embedded', "Build the embedded server."],
       ['--client-only', "Only install client tools, not the server."],
-      ['--universal', "Make mysql a universal binary"]
+      ['--universal', "Make mysql a universal binary"],
+      ['--with-utf8-default', "Set the default character set to utf8"]
     ]
   end
 
@@ -51,6 +52,7 @@ class Mysql <Formula
 
     configure_args << "--without-server" if ARGV.include? '--client-only'
     configure_args << "--with-embedded-server" if ARGV.include? '--with-embedded'
+    configure_args << "--with-charset=utf8" if ARGV.include? '--with-utf8-default'
 
     system "./configure", *configure_args
     system "make install"
@@ -70,12 +72,13 @@ class Mysql <Formula
         mysql_install_db
 
     If this is your first install, automatically load on login with:
-        cp #{prefix}/com.mysql.mysqld.plist ~/Library/LaunchAgents
+        mkdir -p ~/Library/LaunchAgents
+        cp #{prefix}/com.mysql.mysqld.plist ~/Library/LaunchAgents/
         launchctl load -w ~/Library/LaunchAgents/com.mysql.mysqld.plist
 
     If this is an upgrade and you already have the com.mysql.mysqld.plist loaded:
         launchctl unload -w ~/Library/LaunchAgents/com.mysql.mysqld.plist
-        cp #{prefix}/com.mysql.mysqld.plist ~/Library/LaunchAgents
+        cp #{prefix}/com.mysql.mysqld.plist ~/Library/LaunchAgents/
         launchctl load -w ~/Library/LaunchAgents/com.mysql.mysqld.plist
 
     Note on upgrading:
@@ -113,11 +116,11 @@ end
 
 
 __END__
---- old/scripts/mysqld_safe.sh	2009-09-02 04:10:39.000000000 -0400
-+++ new/scripts/mysqld_safe.sh	2009-09-02 04:52:55.000000000 -0400
+--- old/scripts/mysqld_safe.sh  2009-09-02 04:10:39.000000000 -0400
++++ new/scripts/mysqld_safe.sh  2009-09-02 04:52:55.000000000 -0400
 @@ -383,7 +383,7 @@
  fi
- 
+
  USER_OPTION=""
 -if test -w / -o "$USER" = "root"
 +if test -w /sbin -o "$USER" = "root"
