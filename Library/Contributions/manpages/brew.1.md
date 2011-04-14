@@ -164,21 +164,25 @@ didn't include with OS X.
 
     If `--force` is passed, remove a previously cached version and re-fetch.
 
-  * `audit [--warn]`:
+  * `audit [--strict]`:
     Check formulae for Homebrew coding style violations. This should be
     run before submitting a new formula for inclusion.
 
-    If `--warn` is passed, perform additional stricter checks that may not need
+    If `--strict` is passed, perform additional stricter checks that may not need
     to be fixed before submitting.
 
-  * `options [--compact]` <formula>:
+  * `options [--compact] [--all]` <formula>:
     Display install options specific to <formula>.
 
     If `--compact` is passed, show all options on a single line separated by
     spaces.
 
-  * `missing`:
-    Check all installed formuale for missing dependencies.
+    If `--all` is passed, show options for all formulae.
+
+  * `missing` [<formulae>]:
+    Check the given <formulae> for missing dependencies.
+
+    If no <formulae> are given, check all installed brews.
 
   * `server`:
     Start a local web app that lets you browse available formulae, similar
