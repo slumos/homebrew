@@ -18,9 +18,16 @@ module HomebrewArgvExtension
     require 'keg'
     require 'formula'
     @kegs ||= downcased_unique_named.collect do |name|
-      d = HOMEBREW_CELLAR+Formula.canonical_name(name)
-      dirs = d.children.select{ |pn| pn.directory? } rescue []
-      raise NoSuchKegError.new(name) if not d.directory? or dirs.length == 0
+      n = Formula.canonical_name(name)
+      rack = HOMEBREW_CELLAR + if n.include? "/"
+        # canonical_name returns a path if it was a formula installed via a
+        # URL. And we only want the name. FIXME that function is insane.
+        Pathname.new(n).stem
+      else
+        n
+      end
+      dirs = rack.children.select{ |pn| pn.directory? } rescue []
+      raise NoSuchKegError.new(name) if not rack.directory? or dirs.length == 0
       raise MultipleVersionsInstalledError.new(name) if dirs.length > 1
       Keg.new dirs.first
     end
@@ -59,6 +66,10 @@ module HomebrewArgvExtension
     flag? '--HEAD'
   end
 
+  def build_devel?
+    include? '--devel'
+  end
+
   def build_universal?
     include? '--universal'
   end
@@ -83,6 +94,26 @@ module HomebrewArgvExtension
   def usage
     require 'cmd/help'
     Homebrew.help_s
+  end
+
+  def filter_for_dependencies
+    # Clears some flags that affect installation, yields to a block, then
+    # restores to original state.
+    old_args = clone
+
+    flags_to_clear = %w[
+      --debug -d
+      --devel
+      --fresh
+      --interactive -i
+      --HEAD
+    ]
+    flags_to_clear.concat %w[--verbose -v] if quieter?
+    flags_to_clear.each {|flag| delete flag}
+
+    yield
+
+    replace old_args
   end
 
   private

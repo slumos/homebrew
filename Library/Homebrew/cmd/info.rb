@@ -1,4 +1,5 @@
 require 'formula'
+require 'tab'
 
 module Homebrew extend self
   def info
@@ -50,9 +51,8 @@ module Homebrew extend self
 
     puts "Depends on: #{f.deps*', '}" unless f.deps.empty?
 
-    rack = f.prefix.parent
-    if rack.directory?
-      kegs = rack.children
+    if f.rack.directory?
+      kegs = f.rack.children
       kegs.each do |keg|
         next if keg.basename.to_s == '.DS_Store'
         print "#{keg} (#{keg.abv})"
@@ -61,6 +61,13 @@ module Homebrew extend self
       end
     else
       puts "Not installed"
+    end
+
+    if f.installed?
+      tab = Tab.for_formula f
+      unless tab.used_options.empty?
+        puts "Installed with: #{tab.used_options*', '}"
+      end
     end
 
     if f.caveats

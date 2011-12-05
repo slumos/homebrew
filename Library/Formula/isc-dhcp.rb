@@ -1,10 +1,9 @@
 require 'formula'
 
 class IscDhcp < Formula
-  version '4.2.1-P1'
-  url 'http://ftp.isc.org/isc/dhcp/dhcp-4.2.1-P1.tar.gz'
+  url 'ftp://ftp.isc.org/isc/dhcp/dhcp-4.2.3/dhcp-4.2.3.tar.gz'
   homepage 'http://www.isc.org/software/dhcp'
-  md5 '22e6f1eff6d5cfe2621a06cc62ba5b70'
+  md5 'a06649ec5336d284fc86a0232c0edd63'
 
   def install
     # use one dir under var for all runtime state.
@@ -67,7 +66,9 @@ class IscDhcp < Formula
 
     # sample launchd plists
     (prefix+'org.isc.dhcpd.plist').write dhcpd_plist
+    (prefix+'org.isc.dhcpd.plist').chmod 0644
     (prefix+'org.isc.dhcpd6.plist').write dhcpd6_plist
+    (prefix+'org.isc.dhcpd6.plist').chmod 0644
   end
 
   def caveats

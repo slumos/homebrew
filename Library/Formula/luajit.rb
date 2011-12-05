@@ -9,22 +9,42 @@ class Luajit < Formula
   # Skip cleaning both empty folders and bin/libs so external symbols still work.
   skip_clean :all
 
+  fails_with_llvm "_Unwind_Exception_Class undeclared", :build => 2336
+
   def options
     [["--debug", "Build with debugging symbols."]]
   end
 
   # Apply beta8 hotfix #1
   def patches
-    { :p1 => "http://luajit.org/download/beta8_hotfix1.patch" }
+    if not ARGV.build_head?
+      { :p1 => "http://luajit.org/download/beta8_hotfix1.patch" }
+    end
   end
 
   def install
     if ARGV.include? '--debug'
-      system "make", "CCDEBUG=-g", "PREFIX=#{prefix}", "install"
+      system "make", "CCDEBUG=-g", "PREFIX=#{prefix}",
+             "TARGET_CC=#{ENV['CC']}",
+             "amalg"
+      system "make", "CCDEBUG=-g", "PREFIX=#{prefix}",
+             "TARGET_CC=#{ENV['CC']}",
+             "install"
     else
-      system "make", "PREFIX=#{prefix}", "install"
+      system "make", "PREFIX=#{prefix}",
+             "TARGET_CC=#{ENV['CC']}",
+             "amalg"
+      system "make", "PREFIX=#{prefix}",
+             "TARGET_CC=#{ENV['CC']}",
+             "install"
     end
+
     # Non-versioned symlink
+    if ARGV.build_head?
+      version = "2.0.0-beta8"
+    else
+      version = @version
+    end
     ln_s bin+"luajit-#{version}", bin+"luajit"
   end
 end

@@ -1,8 +1,8 @@
 require 'formula'
 
 class Bazaar < Formula
-  url 'http://launchpad.net/bzr/2.4/2.4.0/+download/bzr-2.4.0.tar.gz'
-  md5 '087c65e4b79f454b9e733c21607bdd56'
+  url 'http://launchpad.net/bzr/2.4/2.4.2/+download/bzr-2.4.2.tar.gz'
+  md5 'cfc06fddd348445c65a247c0b33a05db'
   homepage 'http://bazaar-vcs.org/'
 
   def options
@@ -28,7 +28,7 @@ class Bazaar < Formula
       python_cmd = "python"
     end
 
-    archs = archs_for_command("python_cmd")
+    archs = archs_for_command(python_cmd)
     archs.remove_ppc!
     ENV['ARCHFLAGS'] = archs.as_arch_flags
 

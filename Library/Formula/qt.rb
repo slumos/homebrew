@@ -2,21 +2,21 @@ require 'formula'
 require 'hardware'
 
 class Qt < Formula
-  url 'http://get.qt.nokia.com/qt/source/qt-everywhere-opensource-src-4.7.3.tar.gz'
-  md5 '49b96eefb1224cc529af6fe5608654fe'
+  url 'http://get.qt.nokia.com/qt/source/qt-everywhere-opensource-src-4.7.4.tar.gz'
+  md5 '9831cf1dfa8d0689a06c2c54c5c65aaf'
   homepage 'http://qt.nokia.com/'
-  bottle 'https://downloads.sourceforge.net/project/machomebrew/Bottles/qt-4.7.3-bottle.tar.gz'
-  bottle_sha1 'a50123be33c96cba97d4bcee61f3859c7d52000e'
+  bottle 'https://downloads.sf.net/project/machomebrew/Bottles/qt-4.7.4-bottle.tar.gz'
+  bottle_sha1 '3195cddb76c0d13b4500dc75cc55f20f00c10ef1'
 
   head 'git://gitorious.org/qt/qt.git', :branch => 'master'
 
   def patches
     [
-      # Fixes compilation on Lion or with llvm-gcc
-      # Should be unneeded in Qt 4.7.4.
-      "https://qt.gitorious.org/qt/qt/commit/91be1263b42a0a91daf3f905661e356e31482fd3?format=patch",
       # Stop complaining about using Lion
-      "https://qt.gitorious.org/qt/qt/commit/1766bbdb53e1e20a1bbfb523bbbbe38ea7ab7b3d?format=patch"
+      "https://qt.gitorious.org/qt/qt/commit/1766bbdb53e1e20a1bbfb523bbbbe38ea7ab7b3d?format=patch",
+      # Fixes typo in WebKit, this can be removed when upgrading to Qt 4.8
+      # see https://bugs.webkit.org/show_bug.cgi?id=47284 for details
+      DATA
     ]
   end
 
@@ -115,3 +115,19 @@ class Qt < Formula
     EOS
   end
 end
+
+__END__
+diff --git a/src/3rdparty/webkit/WebCore/platform/network/qt/SocketStreamHandlePrivate.h b/src/3rdparty/webkit/WebCore/platform/network/qt/SocketStreamHandlePrivate.h
+index 235f1b1..d074f42 100644
+--- a/src/3rdparty/webkit/WebCore/platform/network/qt/SocketStreamHandlePrivate.h
++++ b/src/3rdparty/webkit/WebCore/platform/network/qt/SocketStreamHandlePrivate.h
+@@ -57 +57 @@ public slots:
+-    void socketSentdata();
++    void socketSentData();
+diff --git a/src/3rdparty/webkit/WebCore/platform/network/qt/SocketStreamHandleQt.cpp b/src/3rdparty/webkit/WebCore/platform/network/qt/SocketStreamHandleQt.cpp
+index e666ff7..d7a7fcc 100644
+--- a/src/3rdparty/webkit/WebCore/platform/network/qt/SocketStreamHandleQt.cpp
++++ b/src/3rdparty/webkit/WebCore/platform/network/qt/SocketStreamHandleQt.cpp
+@@ -113 +113 @@ void SocketStreamHandlePrivate::close()
+-void SocketStreamHandlePrivate::socketSentdata()
++void SocketStreamHandlePrivate::socketSentData()
