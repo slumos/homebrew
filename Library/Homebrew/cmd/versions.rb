@@ -9,9 +9,9 @@ module Homebrew extend self
         puts f.versions * " "
       else
         f.versions do |version, sha|
-          print Tty.white
+          print Tty.white.to_s
           print "#{version.ljust(8)} "
-          print Tty.reset
+          print Tty.reset.to_s
           puts "git checkout #{sha} #{f.pretty_relative_path}"
         end
       end
@@ -62,8 +62,15 @@ class Formula
       mktemp do
         path = Pathname.new(Pathname.pwd+"#{name}.rb")
         path.write text_from_sha(sha)
-        # FIXME: shouldn't have to do this?
-        Object.send(:remove_const, "#{name.capitalize}")
+
+        # Unload the class so Formula#version returns the correct value.
+        # Note that this means that the command will error out after it
+        # encounters a formula that won't import. This doesn't matter
+        # for most formulae, but e.g. Bash at revision aae084c9db has a
+        # syntax error and so `versions` isn't able to walk very far back
+        # through the history.
+        # FIXME shouldn't have to do this?
+        Object.send(:remove_const, "#{Formula.class_s(name)}")
         Formula.factory(path).version
       end rescue nil
     end
