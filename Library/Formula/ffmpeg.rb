@@ -5,9 +5,9 @@ def ffplay?
 end
 
 class Ffmpeg < Formula
-  url 'http://ffmpeg.org/releases/ffmpeg-0.10.tar.bz2'
+  url 'http://ffmpeg.org/releases/ffmpeg-0.10.2.tar.bz2'
   homepage 'http://ffmpeg.org/'
-  sha1 'a3a7fe25db760a99d51266b33386da9c8552feef'
+  sha1 '743f44a71f93b14c9b26ca2424b0da8457cef4be'
 
   head 'git://git.videolan.org/ffmpeg.git'
 
@@ -31,6 +31,7 @@ class Ffmpeg < Formula
   depends_on 'libvpx' => :optional
   depends_on 'xvid' => :optional
   depends_on 'opencore-amr' => :optional
+  depends_on 'libass' => :optional
 
   depends_on 'sdl' if ffplay?
 
@@ -55,6 +56,7 @@ class Ffmpeg < Formula
     args << "--enable-libxvid" if Formula.factory('xvid').installed?
     args << "--enable-libopencore-amrnb" if Formula.factory('opencore-amr').installed?
     args << "--enable-libopencore-amrwb" if Formula.factory('opencore-amr').installed?
+    args << "--enable-libass" if Formula.factory('libass').installed?
     args << "--disable-ffplay" unless ffplay?
 
     # For 32-bit compilation under gcc 4.2, see:
