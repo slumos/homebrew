@@ -61,6 +61,8 @@ class Formula
     CHECKSUM_TYPES.each { |type| set_instance_variable type }
 
     @downloader = download_strategy.new @spec_to_use.url, name, version, @spec_to_use.specs
+
+    @bottle_url ||= bottle_base_url + bottle_filename(self) if @bottle_sha1
   end
 
   # if the dir is there, but it's empty we consider it not installed
@@ -551,8 +553,8 @@ private
     instance_variable_set("@#{type}", class_value) if class_value
   end
 
-  def method_added method
-    raise 'You cannot override Formula.brew' if method == 'brew'
+  def self.method_added method
+    raise 'You cannot override Formula.brew' if method == :brew
   end
 
   class << self
@@ -632,7 +634,6 @@ private
 
       bottle_block.instance_eval &block
       @bottle_version, @bottle_url, @bottle_sha1 = bottle_block.data
-      @bottle_url ||= bottle_base_url + bottle_filename(self) if @bottle_sha1
     end
 
     def mirror val, specs=nil
